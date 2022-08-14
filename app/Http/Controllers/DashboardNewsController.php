@@ -5,14 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\News;
 use App\Models\CategoryNews;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use \Cviebrock\EloquentSluggable\Services\SlugService;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use PhpOffice\PhpSpreadsheet\Chart\Title;
 
 class DashboardNewsController extends Controller
 {
    private $view_page = '.pages.admin.news_menu';
+   private $view_page_achievement = '.pages.admin.achievement_menu';
+   private $view_page_facility = '.pages.admin.facility_menu';
+   private $view_page_extracurricular = '.pages.admin.extracurricular_menu';
+   private $view_page_featuredProgram = '.pages.admin.featuredProgram_menu';
 
    /**
     * Display a listing of the resource.
@@ -114,9 +117,14 @@ class DashboardNewsController extends Controller
       $validatedData = $request->validate([
          'title' => 'required|max:255',
          'slug' => 'required|unique:news|max:255',
+         'news_image' => 'image|file|max:1024',
          'body' => 'required',
          'category_id' => 'required'
       ]);
+
+      if($request->file('news_image')){
+         $validatedData['news_image'] = $request->file('news_image')->store('berita');
+      }
 
       $validatedData['user_id'] = auth()->user()->id;
       $validatedData['excerpt'] = Str::limit(strip_tags($request->body), 255);
@@ -157,19 +165,29 @@ class DashboardNewsController extends Controller
       $rules = [
          'title' => 'required|max:255',
          'body' => 'required',
+         'news_image' => 'image|file|max:1024',
          'category_id' => 'required'
       ];
 
       if ($request->slug != $news->slug) {
          $rules['slug'] = 'required|unique:news|max:255';
       }
-
+      
       $validatedData = $request->validate($rules);
+
+      if($request->file('news_image')){
+         if ($request->old_image){
+            Storage::delete($request->old_image);
+         }
+
+         $validatedData['news_image'] = $request->file('news_image')->store('berita');
+      }
+
 
       $validatedData['user_id'] = auth()->user()->id;
       $validatedData['excerpt'] = Str::limit(strip_tags($request->body), 255);
 
-      News::where('slug', $request->slug)
+      News::where('slug', $news->slug)
          ->update($validatedData);
 
       return redirect('/dashboard/news')
@@ -186,6 +204,10 @@ class DashboardNewsController extends Controller
    {
       News::destroy($news->id);
 
+      if ($news->news_image){
+         Storage::delete($news->news_image);
+      }
+
       return redirect('/dashboard/news')
          ->with('success', 'Berita dengan Judul ' . $news['title'] . ', Berhasil dihapus!');
    }
@@ -193,6 +215,10 @@ class DashboardNewsController extends Controller
    public function destroyByAjax(News $news)
    {
       News::destroy($news->id);
+
+      if ($news->news_image){
+         Storage::delete($news->news_image);
+      }
 
       $data = [
          'status' => 'success',
@@ -207,4 +233,63 @@ class DashboardNewsController extends Controller
       $slug = SlugService::createSlug(News::class, 'slug', $request->title);
       return response()->json(['slug' => $slug]);
    }
+
+
+   
+      /**
+    * Display a listing of the resource.
+    *
+    * @return \Illuminate\Http\Response
+    */
+    public function achievementIndex()
+    {
+       $page = $this->view_page_achievement . '/index';
+ 
+       $data = [
+          'title' => 'Daftar Prestasi',
+          'sidebar_title' => 'achievement_menu',
+          'news' => News::get()->whereIn('category_id', [4,5,6])
+       ];
+       
+       return view($page, $data);
+    }
+
+    public function facilityIndex()
+    {
+       $page = $this->view_page_facility . '/index';
+ 
+       $data = [
+          'title' => 'Daftar Fasilitas',
+          'sidebar_title' => 'facility_menu',
+          'news' => News::get()->where('category_id', 1)
+       ];
+ 
+       return view($page, $data);
+    }
+
+    public function extracurricularIndex()
+    {
+       $page = $this->view_page_extracurricular . '/index';
+ 
+       $data = [
+          'title' => 'Daftar Ekstrakulikuler',
+          'sidebar_title' => 'extracurricular_menu',
+          'news' => News::get()->where('category_id', 2)
+       ];
+ 
+       return view($page, $data);
+    }
+
+    public function featuredProgramIndex()
+    {
+       $page = $this->view_page_featuredProgram . '/index';
+ 
+       $data = [
+          'title' => 'Daftar Program Unggulan',
+          'sidebar_title' => 'featuredProgram_menu',
+          'news' => News::get()->where('category_id', 3)
+       ];
+ 
+       return view($page, $data);
+    }
 }

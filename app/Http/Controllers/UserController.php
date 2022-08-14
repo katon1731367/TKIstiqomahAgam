@@ -2,23 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TeamSales;
-use App\Models\TeamSalesGroup;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use App\Exports\UsersExport;
-use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
    private $view_page = '.pages.admin.user_menu';
    private $USER_ROLE_0 = 'Admin';
-   private $USER_ROLE_1 = 'Kepala Sekolah';
-   private $USER_ROLE_2 = 'Guru';
-   private $USER_ROLE_3 = 'Staff';
+   private $USER_ROLE_1 = 'User';
 
    /**
     * Display a listing of the resource.
@@ -28,10 +22,10 @@ class UserController extends Controller
    public function index()
    {
       $page = $this->view_page . '/index';
-      $userRole = [$this->USER_ROLE_0, $this->USER_ROLE_1, $this->USER_ROLE_2, $this->USER_ROLE_3];
+      $userRole = [$this->USER_ROLE_0, $this->USER_ROLE_1];
 
       $data = [
-         'title' => 'User List',
+         'title' => 'Daftar User',
          'sidebar_title' => 'user_menu',
          'user_role' => $userRole
       ];
@@ -44,7 +38,7 @@ class UserController extends Controller
     *
     * @return \Illuminate\Http\Response
     */
-   public function fetchUser()
+   public function fetchUsers()
    {
       $users = User::get();
 
@@ -53,10 +47,6 @@ class UserController extends Controller
             $user->user_role = $this->USER_ROLE_0;
          } else if ($user->user_role === 1) {
             $user->user_role = $this->USER_ROLE_1;
-         } else if ($user->user_role === 2) {
-            $user->user_role = $this->USER_ROLE_2;
-         } else if ($user->user_role === 3) {
-            $user->user_role = $this->USER_ROLE_3;
          }
       }
 
@@ -79,7 +69,6 @@ class UserController extends Controller
    {
       return "<img src='" . asset($string) . "' style='width: 1em' class='mb-1'>";
    }
-
 
    /**
     * Show the form for creating a new resource.
@@ -128,13 +117,9 @@ class UserController extends Controller
          $validated['user_role'] = 0;
       } else if ($validated['user_role'] === $this->USER_ROLE_1) {
          $validated['user_role'] = 1;
-      } else if ($validated['user_role'] === $this->USER_ROLE_2) {
-         $validated['user_role'] = 2;
-      } else if ($validated['user_role'] === $this->USER_ROLE_3) {
-         $validated['user_role'] = 3;
       }
 
-      // //saving user to database
+      //saving user to database
       User::create($validated);
 
       $data = [
@@ -157,10 +142,6 @@ class UserController extends Controller
          $user->user_role = $this->USER_ROLE_0;
       } else if ($user->user_role === 1) {
          $user->user_role = $this->USER_ROLE_1;
-      } else if ($user->user_role === 2) {
-         $user->user_role = $this->USER_ROLE_2;
-      } else if ($user->user_role === 3) {
-         $user->user_role = $this->USER_ROLE_3;
       }
       return $user;
    }
@@ -177,10 +158,6 @@ class UserController extends Controller
          $user->user_role = $this->USER_ROLE_0;
       } else if ($user->user_role === 1) {
          $user->user_role = $this->USER_ROLE_1;
-      } else if ($user->user_role === 2) {
-         $user->user_role = $this->USER_ROLE_2;
-      } else if ($user->user_role === 3) {
-         $user->user_role = $this->USER_ROLE_3;
       }
 
       return $user;
@@ -330,15 +307,5 @@ class UserController extends Controller
       ];
 
       return $data;
-   }
-
-   /**
-    * Export all user data from storage.
-    *
-    * @return excel file excel
-    */
-   public function exportIntoExcel()
-   {
-      return Excel::download(new UsersExport, 'users-export.xlsx');
    }
 }

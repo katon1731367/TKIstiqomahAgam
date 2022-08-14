@@ -15,11 +15,12 @@ class CreateSchoolProfileHistoriesTable extends Migration
     {
         Schema::create('school_profile_histories', function (Blueprint $table) {
             $table->id();
-            $table->integer('roomCount');
-            $table->integer('teacherCount');
-            $table->integer('ArchievementCount');
-            $table->string('structureOrganization');
-            $table->text('LandingPageInfo');
+            $table->integer('room_count');
+            $table->integer('student_count');
+            $table->integer('teacher_count');
+            $table->integer('achievement_count');
+            $table->string('structure_organization');
+            $table->text('Landing_page_info');
             $table->text('visi');
             $table->text('misi');
             $table->timestamps();

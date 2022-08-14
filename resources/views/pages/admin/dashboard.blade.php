@@ -14,7 +14,7 @@
                             <img class="img-fluid" src="{{ asset('svg/target.svg') }}" style="width: 3em">
                         </div>
                         <div class="row text-center">
-                            <h6 class="card-title"><b>{{0}}</b> Ruang</h6>
+                            <h6 class="card-title"><b>{{ $room_count }}</b> Ruang</h6>
                         </div>
                     </div>
                 </div>
@@ -26,7 +26,7 @@
                             <img class="img-fluid" src="{{ asset('svg/check-circle.svg') }}" style="width: 3em">
                         </div>
                         <div class="row text-center">
-                            <h6 class="card-title"><b>{{ 0 }}</b> Guru</h6>
+                            <h6 class="card-title"><b>{{ $teacher_count }}</b> Guru</h6>
                         </div>
                     </div>
                 </div>
@@ -38,21 +38,9 @@
                             <img class="img-fluid" src="{{ asset('svg/x-circle.svg') }}" style="width: 3em">
                         </div>
                         <div class="row text-center">
-                            <h6 class="card-title"><b>{{ 0 }}</b> Siswa
+                            <h6 class="card-title"><b>{{ $student_count }}</b> Siswa
                             </h6>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-2">
-                <div class="card" style="height: 7em; overflow:auto">
-                    <div class="card-body">
-                            <div class="row justify-content-center mb-2">
-                                <img class="img-fluid" src="{{ asset('svg/users.svg') }}" style="width: 3em">
-                            </div>
-                            <div class="row text-center">
-                                <h6 class="card-title text-truncates"><b>{{ $sales_person_count }}</b> Prestasi</h6>
-                            </div>
                     </div>
                 </div>
             </div>
@@ -63,7 +51,19 @@
                             <img class="img-fluid" src="{{ asset('svg/users.svg') }}" style="width: 3em">
                         </div>
                         <div class="row text-center">
-                            <h6 class="card-title"> <b>{{ $customer_count }}</b> Message</h6>
+                            <h6 class="card-title text-truncates"><b>{{ $achievement_count }}</b> Prestasi</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="card" style="height: 7em; overflow:auto">
+                    <div class="card-body">
+                        <div class="row justify-content-center mb-2">
+                            <img class="img-fluid" src="{{ asset('svg/users.svg') }}" style="width: 3em">
+                        </div>
+                        <div class="row text-center">
+                            <h6 class="card-title"> <b>{{ $message_count }}</b> Message</h6>
                         </div>
                     </div>
                 </div>
@@ -76,12 +76,15 @@
         <div class="row">
             <div class="col-sm-5">
                 <div class="card">
-                    <h5 class="card-header"></h5>
+                    <h5 class="card-header">Berita</h5>
                     <div class="card-body">
-                        <h3>Sales Stage</h3>
-                        <hr class="my-3">
-                        <div class="row">
-                        </div>
+                        <ul class="list-group">
+                            <li class="list-group-item">Total Berita : <b>{{ $news_count }}</b></li>
+                            <li class="list-group-item">Prestasi : <b>{{ $achievement_count }}</b></li>
+                            <li class="list-group-item">Fasilitas : <b>{{ $facility_count }}</b></li>
+                            <li class="list-group-item">Ekstrakulikuler : <b>{{ $extracurricular_count }}</b></li>
+                            <li class="list-group-item">Program Unggulan : <b>{{ $featuredprogram_count }}</b></li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -95,33 +98,30 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>
-                                        <th scope="col">Company</th>
-                                        <th scope="col">Sales</th>
-                                        <th scope="col">Date Of Contact</th>
-                                        <th scope="col">Status</th>
+                                        <th scope="col">Nama</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Tanggal</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{-- @foreach ($recent as $r)
-                                    @php
-                                        $date = explode(' ', $r->date_of_contact);
-                                        $date = $date[0];
-                                    @endphp
-                                    <tr>
-                                        <th scope="row">{{ $loop->iteration }}</th>
-                                        <td>{{ $r->company_name }}</td>
-                                        <td>{{ $r->name }}</td>
-                                        <td>{{ $date }}</td>
-                                        <td>{{ $r->status }}</td>
-                                    </tr>
-                                    @endforeach --}}
+                                    @foreach ($recentContactMessage as $recent)
+                                        @php
+                                            $date = explode(' ', $recent->created_at);
+                                            $date = $date[0];
+                                        @endphp
+                                        <tr>
+                                            <th scope="row">{{ $loop->iteration }}</th>
+                                            <td>{{ $recent->name }}</td>
+                                            <td>{{ $recent->email }}</td>
+                                            <td>{{ $date }}</td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 @endsection

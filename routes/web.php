@@ -7,6 +7,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CategoryNewsController;
 use App\Http\Controllers\DashboardNewsController;
+use App\Http\Controllers\DashboardSchoolProfileController;
+use App\Http\Controllers\DashboardTeacherController;
+use App\Http\Controllers\DashboardContactMessageController;
+use App\Http\Controllers\UserSideController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,17 +24,28 @@ use App\Http\Controllers\DashboardNewsController;
 */
 
 Route::group(['middleware' => 'prevent-back-history'], function () {
+   Route::get('/', [UserSideController::class, 'home']);
+   
+   Route::get('/visimisi', [UserSideController::class, 'visimisi']);
+   Route::get('/struktur', [UserSideController::class, 'struktur']);
+   Route::get('/pengajar', [UserSideController::class, 'pengajar']);
+   Route::get('/fasilitas', [UserSideController::class, 'fasilitas']);
+   Route::get('/ekstrakulikuler', [UserSideController::class, 'ekstrakulikuler']);
+   
+   Route::get('/program', [UserSideController::class, 'program']);
+   Route::get('/berita', [UserSideController::class, 'berita']);
+   Route::get('/berita/{string:slug}', [UserSideController::class, 'detailBerita']);
+   Route::get('/pengajar/{string:id}', [UserSideController::class, 'detailPengajar']);
+
+   Route::get('/prestasi-sekolah', [UserSideController::class, 'prestasiSekolah']);
+   Route::get('/prestasi-kepala-sekolah', [UserSideController::class, 'prestasiKepalaSekolah']);
+   Route::get('/prestasi-guru', [UserSideController::class, 'prestasiGuru']);
+
    //Auth Route
    Route::get('/home', [AuthController::class, 'home'])->middleware('auth');
    Route::post('/login', [AuthController::class, 'authenticate']);
    Route::get('/login', [AuthController::class, 'index'])->middleware('guest')->name('login');
    Route::post('/logout', [AuthController::class, 'logout']);
-
-   Route::get('/', function () {
-      return view('pages.home', [
-         "title" => "Beranda"
-      ]);
-   });
 
    //NewsPages
    Route::get('/news', [NewsController::class, 'index']);
@@ -46,7 +61,7 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
 
       //Users Route
       Route::resource('/dashboard/users', UserController::class);
-      Route::get('/dashboard/fetchuser', [UserController::class, 'fetchUser']);
+      Route::get('/dashboard/fetchusers', [UserController::class, 'fetchUsers']);
       Route::get('/dashboard/getuserdata', [UserController::class, 'getUserData'])->name('getUserData');
       Route::post('/dashboard/users/{user:username}/storePassword', [UserController::class, 'storePassword']);
       Route::get('/dashboard/export-users', [UserController::class, 'exportIntoExcel']);
@@ -55,6 +70,24 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
       Route::resource('/dashboard/news', DashboardNewsController::class);
       Route::get('/dashboard/fetchnews', [DashboardNewsController::class, 'fetchNews']);
       Route::get('/dashboard/newscheckslug', [DashboardNewsController::class, 'checkSlug']);
-      Route::delete('/dashboard/news/destroyByAjax/{news:slug}', [DashboardNewsController::class, 'destroyByAjax']);
+      Route::delete('/dashboard/news/destroybyajax/{news:slug}', [DashboardNewsController::class, 'destroyByAjax']);
+
+      Route::get('/dashboard/achievement', [DashboardNewsController::class, 'achievementIndex']);
+      Route::get('/dashboard/facility', [DashboardNewsController::class, 'facilityIndex']);
+      Route::get('/dashboard/extracurricular', [DashboardNewsController::class, 'extracurricularIndex']);
+      Route::get('/dashboard/featuredprogram', [DashboardNewsController::class, 'featuredProgramIndex']);
+      
+      // Route School Profile
+      Route::resource('/dashboard/schoolprofile', DashboardSchoolProfileController::class);
+
+      // Route School Profile
+      Route::resource('/dashboard/contactmessage', DashboardContactMessageController::class);
+      Route::get('/dashboard/fetchmessage', [DashboardContactMessageController::class, 'fetchMessage']);
+      Route::delete('/dashboard/contactmessage/destroybyajax/{contactmessage:id}', [DashboardContactMessageController::class, 'destroyByAjax']);
+      
+      // Route Teacher
+      Route::resource('/dashboard/teachers', DashboardTeacherController::class);
+      Route::get('/dashboard/fetchteachers', [DashboardTeacherController::class, 'fetchTeachers']);
+      Route::delete('/dashboard/teachers/destroybyajax/{teacher:id}', [DashboardTeacherController::class, 'destroyByAjax']);
    });
 });

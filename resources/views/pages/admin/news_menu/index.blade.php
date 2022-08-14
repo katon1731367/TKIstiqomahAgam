@@ -48,9 +48,7 @@
                 var slug = $(this).attr('id');
                 destroy(slug);
             });
-        </script>
-
-        <script>
+            
             //crud function
             function fetchData() {
                 $('#tableNews').DataTable({
@@ -92,7 +90,7 @@
 
             function destroy(slug) {
                 $.ajax({
-                    url: "/dashboard/news/destroyByAjax/" + slug,
+                    url: "/dashboard/news/destroybyajax/" + slug,
                     type: 'post',
                     data: {
                         _method: 'delete',
@@ -103,7 +101,7 @@
                         $('#tableNews').DataTable().ajax.reload()
                     }
                 })
-            }
+            } 
 
             function flashMessage(status, message) {
                 messageHtml = '<div class="alert alert-' + status + ' alert-dismissible fade show">' + message;

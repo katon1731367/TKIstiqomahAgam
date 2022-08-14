@@ -10,9 +10,8 @@
                 <div class="col-md-6 d-flex flex-row-reverse">
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" id="AddUser"
                         data-bs-target="#formAddUser">
-                        Add User
+                        Tambah User
                     </button>
-                    <a href="/dashboard/export-users" class="btn btn-success mx-1">Export Excel</a>
                 </div>
 
             </div>
@@ -24,11 +23,11 @@
             <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Name</th>
+                    <th scope="col">Nama</th>
                     <th scope="col">Username</th>
                     <th scope="col">Email</th>
-                    <th scope="col">User Level</th>
-                    <th scope="col">Action</th>
+                    <th scope="col">level pengguna</th>
+                    <th scope="col">Aksi</th>
                 </tr>
             </thead>
         </table>
@@ -39,7 +38,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="formAddUserLabel">Form Add User</h5>
+                    <h5 class="modal-title" id="formAddUserLabel">Form Tambah User</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div id="form-errors"></div>
@@ -69,16 +68,16 @@
                     <div class="form-floating my-1">
                         <input type="password" class="form-control rounded-bottom" name="password" placeholder="Password"
                             id="password">
-                        <label for="password">Password</label>
+                        <label for="password">Kata Sandi</label>
                     </div>
                     <div class="form-floating">
                         <select class="form-select rounded-bottom" name="user_role" id="user_role">
-                            <option>Selected</option>
+                            <option>pilih</option>
                             @foreach ($user_role as $role)
                                 <option value="{{ $role }}">{{ $role }}</option>
                             @endforeach
                         </select>
-                        <label for="user_role">Role</label>
+                        <label for="user_role">Level User</label>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -124,8 +123,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" id="close" class="btn btn-primary" data-bs-toggle="modal"
-                        id="modalChangePassButton" data-bs-target="#modalChangePass">Change User Password</button>
-                    <button type="button" id="close" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        id="modalChangePassButton" data-bs-target="#modalChangePass">Ubah Kata Sandi</button>
+                    <button type="button" id="close" class="btn btn-secondary" data-bs-dismiss="modal">Tutuo</button>
                 </div>
             </div>
         </div>
@@ -145,12 +144,12 @@
                     <div class="form-floating my-1">
                         <input type="password" class="form-control rounded-bottom" name="change_password"
                             placeholder="Password" id="change_password">
-                        <label for="password">Password</label>
+                        <label for="password">Kata Sandi</label>
                     </div>
                     <div class="form-floating my-1">
                         <input type="password" class="form-control rounded-bottom" name="repeat_password"
                             placeholder="Password" id="repeat_password">
-                        <label for="repeat-password">Repeat Password</label>
+                        <label for="repeat-password">Ulangi Kata Sandi</label>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -169,7 +168,7 @@
             })
 
             $(document).on('click', '#AddUser', function() {
-                $('#formAddUserLabel').text('Form Add User');
+                $('#formAddUserLabel').text('Form Tambah User');
                 $('#saveUser').text('Save User');
                 $('#password').removeClass('is-invalid').show();
                 clearForm();
@@ -177,7 +176,7 @@
 
             $(document).on('click', '#saveUser', function() {
                 $('#password').show();
-                if ($(this).text() === 'Save Edit') {
+                if ($(this).text() === 'Perbaharui') {
                     update();
                 } else {
                     create();
@@ -199,9 +198,9 @@
                     },
                     success: function(res) {
                         $('#modalDetailUserLabel').text('Detail User ' + res.name);
-                        $('#modalChangePassLabel').text('Change Password for ' + res.name);
+                        $('#modalChangePassLabel').text('Ubah Password untuk ' + res.name);
 
-                        $('#name-detail-title').text("Name");
+                        $('#name-detail-title').text("Nama");
                         $('#name-detail-body').text(res.name);
 
                         $('#username-detail-title').text("Username");
@@ -213,7 +212,7 @@
                         $('#no_handphone-detail-title').text("No Handphone");
                         $('#no_handphone-detail-body').text(res.no_handphone);
 
-                        $('#user_role-detail-title').text("User Role");
+                        $('#user_role-detail-title').text("Level User");
                         $('#user_role-detail-body').text(res.user_role);
                     }
                 })
@@ -224,8 +223,8 @@
 
                 $('#AddUser').click();
                 $('#password').hide();
-                $('#saveUser').text('Save Edit')
-                $('#formAddUserLabel').text('Form Edit User');
+                $('#saveUser').text('Perbaharui')
+                $('#formAddUserLabel').text('Form Perbaharui User');
                 $.ajax({
                     url: "/dashboard/users/" + username + "/edit",
                     type: 'get',
@@ -257,7 +256,7 @@
                 $('#password').removeClass('is-invalid').val(null);
                 $('#email').removeClass('is-invalid').val(null);
                 $('#no_handphone').removeClass('is-invalid').val(null);
-                $('#user_role').removeClass('is-invalid').val('select');
+                $('#user_role').removeClass('is-invalid').val('pilih');
             }
 
             function flashMessage(status, message) {
@@ -282,7 +281,7 @@
                     serverside: true,
                     responseive: true,
                     ajax: {
-                        url: "/dashboard/fetchuser"
+                        url: "/dashboard/fetchusers"
                     },
                     columns: [{
                             "data": null,
@@ -326,7 +325,7 @@
                         email: $('#email').val(),
                         no_handphone: $('#no_handphone').val(),
                         password: $('#password').val(),
-                        user_role: $("#user_role option:selected").text(),
+                        user_role: $("#user_role option:pilih").text(),
                         "_token": "{{ csrf_token() }}"
                     },
                     success: function(res) {
